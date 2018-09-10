@@ -12,12 +12,12 @@ float actuatorPosition = 0; // store of mapped actuator position (0-255)
 
 int actuatorDir = LOW; //store of actuator direction 
 float  actuatorSpeed = 128;//store of actuaor speed
-float actuatorFullSpeed= 100; //value of full speed of actuator (denoted C)
+float actuatorFullSpeed= 50; //value of full speed of actuator (denoted C)
 
 float  residualError = 0; // store of the difference between the desired position and the actual position
-int speedScale = 2; // store of residual speed scaling factor
-float residualRolloffStart = 1000; // residual value where speed begind linear roll off (denoted (b)
-float residualStop = 10; // residual value where speed becomes zero (denoted a)
+float residualRolloffStart = 600; // residual value where speed begind linear roll off (denoted (b)
+float residualStop = 100
+; // residual value where speed becomes zero (denoted a)
 
 
 void setup() {
@@ -56,16 +56,22 @@ else if
 (abs(residualError)<residualRolloffStart)
 {actuatorSpeed = (abs(residualError)*actuatorFullSpeed) /(residualRolloffStart-residualStop) - (residualRolloffStart*actuatorFullSpeed)/(residualRolloffStart-residualStop)
 +actuatorFullSpeed;}
-
 else 
 {actuatorSpeed = actuatorFullSpeed;}
 
+
+//add simplke high pass filter to actuatr speed
+if (actuatorSpeed < 10)
+{actuatorSpeed = 0;}
+
+// detect if direction has changed and slow speed
+if 
 
 //write values to output pins
 
 digitalWrite(actuatorDirOutputPin,actuatorDir);
 analogWrite (actuatorSpeedOutputPin, actuatorSpeed);
-delay(20);
+delay(1);
  Serial.print ("Input_position = "); Serial.print(inputPosition); 
  Serial.print (" Actuator_position = "); Serial.print(actuatorPosition) ;
  Serial.print (" Residual_error = "); Serial.print(residualError) ;
